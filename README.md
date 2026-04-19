@@ -2,9 +2,8 @@
 
 A practical **Planner + Researcher + Executor + Critic** application built in Python with **Ollama**, **FastAPI**, and **DDGS**.
 
-This repo is meant to be blog-ready and Bitbucket-ready. You can run it locally, inspect every agent step, and extend it into a more advanced agentic platform later.
+This repo is meant to be know about this project and learning purpose only. You can run it locally, inspect every agent step, and extend it into a more advanced agentic platform later.
 
-![Architecture](docs/architecture/architecture.svg)
 
 ## Why this project exists
 
@@ -26,12 +25,10 @@ That is what this repo does.
 - **Run store** that saves every execution as JSON under `data/runs/`.
 - **FastAPI chat-style UI** for browser testing.
 - **CLI** for terminal usage.
-- **Bitbucket pipeline** for basic validation.
-- **Medium-ready blog draft** in `blog/medium-blog.md`.
 
 ## Recommended use case
 
-This is ideal when you want to learn agent orchestration without paying for APIs. It also gives you a strong architecture story for a blog post, demo, or portfolio repo.
+This is ideal when you want to learn agent orchestration without paying for APIs.
 
 ## Repository structure
 
@@ -47,20 +44,11 @@ open-llm-multi-agent-system/
 │   ├── prompts.py         # Agent prompts
 │   ├── schemas.py         # Pydantic models
 │   └── orchestrator.py    # End-to-end workflow coordinator
-├── blog/
-│   └── medium-blog.md     # Human-style article draft
-├── docs/
-│   ├── architecture/      # Diagram + Mermaid sources
-│   └── decisions.md       # Design choices and trade-offs
 ├── static/
 │   └── index.html         # Lightweight chat-style UI
 ├── tests/
 │   └── ...                # Offline unit tests
-├── bitbucket-pipelines.yml
 ├── cli.py
-├── docker-compose.yml
-├── docker-compose.ollama.yml
-├── Dockerfile
 ├── Makefile
 ├── README.md
 └── requirements.txt
@@ -198,70 +186,6 @@ make test
 make compile
 ```
 
-## Docker options
-
-### Option A: Run the app in Docker and keep Ollama on the host
-
-1. Set this in `.env`:
-
-```env
-OLLAMA_BASE_URL=http://host.docker.internal:11434
-```
-
-2. Start the app:
-
-```bash
-docker compose up --build
-```
-
-### Option B: Run both the app and Ollama in Docker
-
-```bash
-docker compose -f docker-compose.ollama.yml up -d --build
-```
-
-Then pull the model inside the Ollama container:
-
-```bash
-docker compose -f docker-compose.ollama.yml exec ollama ollama pull llama3.2:3b
-```
-
-Open the UI:
-
-```text
-http://127.0.0.1:8000
-```
-
-## Bitbucket setup
-
-### 1) Create a new Bitbucket repository
-
-Create an empty repo in your Bitbucket workspace.
-
-### 2) Push this code
-
-```bash
-git init
-git add .
-git commit -m "Initial commit: open LLM multi-agent system"
-git branch -M main
-git remote add origin https://bitbucket.org/<workspace>/<repo>.git
-git push -u origin main
-```
-
-### 3) Pipeline behavior
-
-`bitbucket-pipelines.yml` installs the dependencies, runs the unit tests, and compiles the project.
-
-That gives you a simple but real CI story when you publish the repo.
-
-## Tests
-
-The unit tests are designed to work **without calling Ollama**. They validate the orchestration logic, JSON extraction, and run storage.
-
-```bash
-python -m unittest discover -s tests -p "test_*.py"
-```
 
 ## Troubleshooting
 
@@ -284,7 +208,7 @@ python -m unittest discover -s tests -p "test_*.py"
 
 ## Where to extend this next
 
-If you want to push this from demo to platform pattern, these are the next upgrades I would make:
+If you want to push this from demo to platform pattern, these are the next upgrades you can make it better :
 
 - add vector memory for long-running projects,
 - add role-based tool permissions,
@@ -292,13 +216,6 @@ If you want to push this from demo to platform pattern, these are the next upgra
 - add citation scoring and reranking,
 - replace JSON file storage with PostgreSQL,
 - add observability around token counts, latency, and failure reasons.
-
-## Blog assets included
-
-- `blog/medium-blog.md` → publish-ready article draft
-- `docs/architecture/architecture.svg` → system diagram
-- `docs/architecture/sequence.mmd` → step flow in Mermaid
-- `docs/decisions.md` → design rationale
 
 ## License
 
