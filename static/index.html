@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Open LLM Multi-Agent System</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --ink: #0f172a;
+      --muted: #475569;
+      --line: #dbe3ee;
+      --accent: #2563eb;
+      --accent-soft: #dbeafe;
+      --success: #166534;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 20%);
+      color: var(--ink);
+    }
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 20px 64px;
+    }
+    .hero {
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: 2.2rem;
+    }
+    .hero p {
+      margin: 0;
+      max-width: 900px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 20px;
+      align-items: start;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    textarea {
+      width: 100%;
+      min-height: 170px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      padding: 14px;
+      font-size: 15px;
+      resize: vertical;
+      font-family: inherit;
+      color: var(--ink);
+    }
+    textarea:focus {
+      outline: 2px solid var(--accent-soft);
+      border-color: var(--accent);
+    }
+    .subtle {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+    button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+    .status {
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .panel-title {
+      margin: 0 0 10px;
+      font-size: 1.05rem;
+    }
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .metric {
+      background: #f8fbff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    .metric .k {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .metric .v {
+      margin-top: 6px;
+      font-weight: 700;
+    }
+    .step {
+      border-top: 1px solid var(--line);
+      padding-top: 14px;
+      margin-top: 14px;
+    }
+    .step h4 {
+      margin: 0 0 6px;
+    }
+    .step p, .result pre {
+      margin: 0;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: inherit;
+    }
+    .result pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 16px;
+      border-radius: 14px;
+      overflow-x: auto;
+      margin-top: 10px;
+    }
+    .source-list {
+      margin: 12px 0 0;
+      padding-left: 18px;
+    }
+    .source-list li { margin-bottom: 8px; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="pill">Planner + Researcher + Executor + Critic</div>
+      <h1>Open LLM Multi-Agent System</h1>
+      <p>
+        This demo runs a practical agent workflow on top of Ollama. Give it a real task,
+        let the planner break it down, let the researcher gather evidence, and let the executor
+        assemble the final architect-level answer.
+      </p>
+    </section>
+
+    <div class="grid">
+      <section class="card">
+        <label for="goal">Goal</label>
+        <textarea id="goal">Design an architect-level recommendation for using an event-driven pattern in a medium-sized SaaS platform, including trade-offs, risks, and a phased adoption plan.</textarea>
+
+        <label for="context" style="margin-top: 16px;">Optional context</label>
+        <textarea id="context" style="min-height: 110px;">Assume a small platform team, limited budget, and a preference for open tooling.</textarea>
+
+        <div class="actions">
+          <button id="runBtn">Run agents</button>
+          <div id="status" class="status">Make sure Ollama is running and at least one model has been pulled.</div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <h3 class="panel-title">What this demo does</h3>
+        <p class="subtle">
+          The workflow is intentionally explicit. Instead of one giant prompt, the request moves through
+          four stages: planning, evidence gathering, synthesis, and review. That makes the output easier
+          to debug, audit, and improve.
+        </p>
+        <div class="metric-grid" id="metrics"></div>
+      </aside>
+    </div>
+
+    <section class="card" style="margin-top: 20px;">
+      <h3 class="panel-title">Execution plan</h3>
+      <div id="plan"></div>
+    </section>
+
+    <section class="card result" style="margin-top: 20px;">
+      <h3 class="panel-title">Final answer</h3>
+      <pre id="answer">Run the agents to see the result.</pre>
+    </section>
+
+    <section class="card" style="margin-top: 20px;">
+      <h3 class="panel-title">Source references</h3>
+      <ul class="source-list" id="sources"></ul>
+    </section>
+  </div>
+
+  <script>
+    const runBtn = document.getElementById('runBtn');
+    const statusEl = document.getElementById('status');
+    const goalEl = document.getElementById('goal');
+    const contextEl = document.getElementById('context');
+    const planEl = document.getElementById('plan');
+    const answerEl = document.getElementById('answer');
+    const metricsEl = document.getElementById('metrics');
+    const sourcesEl = document.getElementById('sources');
+
+    function renderMetrics(metrics) {
+      metricsEl.innerHTML = '';
+      const entries = [
+        ['Planning', metrics.planning_seconds],
+        ['Research', metrics.research_seconds],
+        ['Execution', metrics.execution_seconds],
+        ['Total', metrics.total_seconds],
+      ];
+      for (const [key, value] of entries) {
+        const div = document.createElement('div');
+        div.className = 'metric';
+        div.innerHTML = `<div class="k">${key}</div><div class="v">${Number(value).toFixed(2)}s</div>`;
+        metricsEl.appendChild(div);
+      }
+    }
+
+    function renderPlan(steps) {
+      if (!steps || steps.length === 0) {
+        planEl.innerHTML = '<p class="subtle">No steps returned.</p>';
+        return;
+      }
+      planEl.innerHTML = steps.map(item => `
+        <div class="step">
+          <h4>${item.step.step_id}. ${item.step.title}</h4>
+          <p><strong>Purpose:</strong> ${item.step.purpose}</p>
+          <p><strong>Query:</strong> ${item.step.research_query}</p>
+          <p><strong>Deliverable:</strong> ${item.step.deliverable}</p>
+          <p style="margin-top: 10px;"><strong>Research note:</strong></p>
+          <p>${item.research_note}</p>
+        </div>
+      `).join('');
+    }
+
+    function renderSources(steps) {
+      const items = [];
+      steps.forEach(step => {
+        step.evidence.forEach(ev => {
+          items.push(`<li><a href="${ev.url}" target="_blank" rel="noreferrer">[S${ev.rank}] ${ev.title}</a></li>`);
+        });
+      });
+      sourcesEl.innerHTML = items.join('') || '<li class="subtle">No source links found.</li>';
+    }
+
+    async function runAgents() {
+      runBtn.disabled = true;
+      statusEl.textContent = 'Running planner, researcher, executor, and critic...';
+      answerEl.textContent = 'Working...';
+      try {
+        const response = await fetch('/api/execute', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ goal: goalEl.value, context: contextEl.value })
+        });
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.detail || 'Request failed');
+        }
+        renderPlan(data.steps);
+        renderSources(data.steps);
+        renderMetrics(data.metrics);
+        answerEl.textContent = data.final_answer;
+        statusEl.textContent = `Completed run ${data.run_id}`;
+      } catch (error) {
+        answerEl.textContent = String(error.message || error);
+        statusEl.textContent = 'The workflow failed. Check the API error and confirm Ollama is running.';
+      } finally {
+        runBtn.disabled = false;
+      }
+    }
+
+    runBtn.addEventListener('click', runAgents);
+  </script>
+</body>
+</html>
